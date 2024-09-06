@@ -317,7 +317,7 @@ async function eliminarCuenta() {
                     method: 'POST',
                     body: form
                 });
-                window.location.href = 'index.php';
+                window.location.href = '../index.php';
             } catch (error) {
                 console.log("Error al eliminar la cuenta: " + error);
             }

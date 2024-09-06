@@ -18,10 +18,10 @@ $_SESSION['correo'] = "";
 <body>
     <header>
         <div>
-            <a href="index.php"><img src="static/img/logo.png" alt="ERROR"></a>
+            <a href="../index.php"><img src="static/img/logo.png" alt="ERROR"></a>
         </div>
         <div>
-            <a href="index.php"><button>
+            <a href="../index.php"><button>
                     <h3>INICIAR SESIÓN</h3>
                 </button></a>
         </div>

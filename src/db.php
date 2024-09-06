@@ -5,7 +5,6 @@ function conn()
     $usuariodb = "root";
     $password = "";
     $dbname = "dev";
-
     $conectar = mysqli_connect($hostname, $usuariodb, $password, $dbname);
     return $conectar;
 }

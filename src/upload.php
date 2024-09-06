@@ -13,9 +13,8 @@ session_start();
 include_once("db.php");
 $conexion = conn();
 $activo = $_SESSION['correo'];
-$correo = $_GET['following'];
 if ($activo == "") {
-    echo "<script>window.location.href = 'index.php';</script>";
+    echo "<script>window.location.href = '../index.php';</script>";
 }
 $consulta = $conexion->query("SELECT nombre, apellido, imagen FROM usuario WHERE correo = '$activo'");
 if ($consulta) {
@@ -41,41 +40,25 @@ if ($consulta) {
             <a href="myAccount.php"><button>
                     <h3>MI CUENTA</h3>
                 </button></a>
-            <a href="index.php"><button>
+            <a href="../index.php"><button>
                     <h3>CERRAR SESIÓN</h3>
                 </button></a>
         </div>
     </header>
     <main>
         <div class="formulario">
-            <?php
-            echo "<h1 class='titulo'>Usuarios seguidos por $correo</h1>";
-            $sql = "SELECT seguido FROM seguidor WHERE seguidor = '$correo'";
-            $consulta = $conexion->query($sql);
-            $resultado = $consulta->num_rows;
-            if ($resultado > 0) {
-                while ($usuario = $consulta->fetch_assoc()) {
-                    $user = $usuario['seguido'];
-                    $fila = $conexion->query("SELECT nombre, apellido, imagen, correo FROM usuario WHERE correo = '$user'")->fetch_assoc();
-                    $nombre = $fila['nombre'];
-                    $apellido = $fila['apellido'];
-                    $imagen = $fila['imagen'];
-                    $correo = $fila['correo'];
-                    echo "
-                    <div class='usuario'>
-                        <h1>$nombre $apellido</h1>
-                        <h3>$correo</h3>
-                        <img src='$imagen'>
-                        <br>
-                        <a href='account.php?correo=" . $correo . "'><button>VER MÁS</button></a>
-                    </div>
-                    ";
-                }
-            } else {
-                echo "<br>Este usuario no sigue a nadie.";
-            }
-            ?>
+            <h1>PUBLICAR</h1>
+            <form action="upload2.php" method="POST">
+                <h3>Descripción:</h3>
+                <textarea name="descripcion" placeholder="Escribe aquí lo que quieras publicar" required></textarea>
+                <div class="campo">
+                    <h3>Imagen (URL):</h3>
+                    <input type="url" name="imagen" placeholder="URL">
+                </div>
+                <button type="submit">PUBLICAR</button>
+            </form>
         </div>
+
     </main>
     <footer>
         <div>

@@ -17,7 +17,7 @@ error_reporting(0);
 $conexion = conn();
 $activo = $_SESSION['correo'];
 if ($activo == "") {
-    echo "<script>window.location.href = 'index.php';</script>";
+    echo "<script>window.location.href = '../index.php';</script>";
 }
 $consulta = $conexion->query("SELECT nombre, apellido, imagen FROM usuario WHERE correo = '$activo'");
 if ($consulta) {
@@ -43,7 +43,7 @@ if ($consulta) {
             <a href="myAccount.php"><button>
                     <h3>MI CUENTA</h3>
                 </button></a>
-            <a href="index.php"><button>
+            <a href="../index.php"><button>
                     <h3>CERRAR SESIÓN</h3>
                 </button></a>
         </div>
@@ -76,7 +76,7 @@ if ($consulta) {
         $filtro = "fecha";
         try {
             $filtro = $_POST['filtro'];
-        } catch (e) {
+        } catch (Exception $e) {
 
         }
         if ($filtro == 'fecha') {

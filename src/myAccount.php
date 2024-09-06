@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="static/css/styles.css">
     <link rel="icon" href="static/img/icon.ico">
     <script src="https://kit.fontawesome.com/478acdb782.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
 </head>
 <?php
 session_start();
@@ -15,9 +16,8 @@ include_once("db.php");
 $conexion = conn();
 $activo = $_SESSION['correo'];
 if ($activo == "") {
-    echo "<script>window.location.href = 'index.php';</script>";
+    echo "<script>window.location.href = '../index.php';</script>";
 }
-$correo = $_GET['correo'];
 $consulta = $conexion->query("SELECT nombre, apellido, imagen FROM usuario WHERE correo = '$activo'");
 if ($consulta) {
     $fila = $consulta->fetch_assoc();
@@ -39,22 +39,19 @@ if ($consulta) {
             <h3>$nombre $apellido</h3>
             ";
             ?>
-            <a href="myAccount.php"><button>
-                    <h3>MI CUENTA</h3>
-                </button></a>
-            <a href="index.php"><button>
+            <a href="../index.php"><button>
                     <h3>CERRAR SESIÓN</h3>
                 </button></a>
         </div>
     </header>
     <main>
         <div class="usuarioVista">
+            <h1>MI CUENTA</h1>
             <?php
-            $consulta = $conexion->query("SELECT * FROM usuario WHERE correo = '$correo'");
-            $cantidadSeguidores = $conexion->query("SELECT COUNT(*) AS total FROM seguidor WHERE seguido = '$correo'");
+            $consulta = $conexion->query("SELECT * FROM usuario WHERE correo = '$activo'");
+            $cantidadSeguidores = $conexion->query("SELECT COUNT(*) AS total FROM seguidor WHERE seguido = '$activo'");
             $seguidores = $cantidadSeguidores->fetch_assoc()['total'];
-            $cantidadSeguidos = $conexion->query("SELECT COUNT(*) AS total FROM seguidor WHERE seguidor = '$correo'");
-            $activoSigue = $conexion->query("SELECT * FROM seguidor WHERE seguidor = '$activo' AND seguido = '$correo'")->num_rows;
+            $cantidadSeguidos = $conexion->query("SELECT COUNT(*) AS total FROM seguidor WHERE seguidor = '$activo'");
             $seguidos = $cantidadSeguidos->fetch_assoc()['total'];
             if ($consulta) {
                 $fila = $consulta->fetch_assoc();
@@ -76,42 +73,39 @@ if ($consulta) {
                 echo "
                 <div class='usuarioHeader'>
                     <img src='$imagen'>
-                    <div>
-                        <h1>$nombre $apellido</h1>
-                        <h3>$titulo</h3>
-                        <h4>$correo</h4>
+                    <div class='itemInfo'>
+                        <div class='edit'>
+                            <h1>$nombre $apellido</h1>
+                            <i class='fa-solid fa-pen-to-square' id='cambiarNombre'></i>
+                        </div>
+                        <div class='edit'>
+                            <h3>$titulo</h3>
+                            <i class='fa-solid fa-pen-to-square' id='cambiarTitulo'></i>
+                        </div>
+                        <div class='edit'>
+                            <h4>$activo</h4>
+                            <i class='fa-solid fa-pen-to-square' id='cambiarCorreo'></i>
+                        </div>
                     </div>";
                 if ($repositorio != "") {
                     echo "    
                     <div>
                         <br>
                         <br>
-                        <a href='$repositorio' target='_blank'>
-                        <i class='fa-solid fa-folder fa-2xl' style='color: #4EBFD9;'></i>
-                        <h3>Mi Repo</h3>
-                        </a>
+                        <div class='edit'>
+                            <a href='$repositorio' target='_blank'>
+                            <i class='fa-solid fa-folder fa-2xl' style='color: #4EBFD9;'></i>
+                            <h3>Mi Repo</h3>
+                            </a>
+                            <i class='fa-solid fa-pen-to-square' id='cambiarRepo'></i>
+                        </div>
                     </div>";
                 }
                 echo "
                 </div>
                 <div class='usuarioInfo'>
                     <div>
-                        <a href='followers.php?followed=" . $correo . "'><h2>Seguidores: <h3 id='seguidores'>$seguidores</h3></h2></a>
-                    </div>
-                    <div>
-                    ";
-                if ($activo!=$correo) {
-                    if ($activoSigue == 1) {
-                        echo "
-                            <button id='seguir' title='$correo' class='seguido'><h3>Seguido</h3><Seguido</button>
-                        ";
-                    } else {
-                        echo "
-                            <button id='seguir' title='$correo' class='seguir'><h3>Seguir</h3></button>
-                        ";
-                    }
-                }
-                echo "
+                        <a href='followers.php?followed=" . $correo . "'><h2>Seguidores: <h3>$seguidores</h3></h2></a>
                     </div>
                     <div>
                         <a href='following.php?following=" . $correo . "'><h2>Seguidos: <h3>$seguidos</h3></h2></a>
@@ -119,28 +113,45 @@ if ($consulta) {
                 </div>
                 <div class='usuarioBio'>
                     <h2>Sobre mí</h2>
-                    <p>$bio</p>
+                    <div class='edit'>
+                        <p>$bio</p>
+                        <i class='fa-solid fa-pen-to-square' id='cambiarBio'></i>
+                    </div>
                 </div>
                 <div class='usuarioInfo'>
-                    <div>
+                    <div class='itemInfo'>
                         <h2>Fecha de Nacimiento</h2>
-                        <h3>$fecha</h3>
+                        <div class='edit'>
+                            <h3>$fecha</h3>
+                            <i class='fa-solid fa-pen-to-square' id='cambiarFecha'></i>
+                        </div>
                         <h3>Edad: $edad</h3>
                     </div>
-                    <div>
+                    <div class='itemInfo'>
                         <h2>Ubicación</h2>
-                        <h3 id='ubicacion'>$ubicacion</h3>
+                        <div class='edit'>
+                            <h3 id='ubicacion'>$ubicacion</h3>
+                            <i class='fa-solid fa-pen-to-square' id=cambiarPais></i>
+                        </div>
                         <img id='bandera' src='' width='50' alt='Bandera'>
                     </div>
                 </div>
+                <div>
+                    <button id='cambiarImagen'>Cambiar Foto</button>
+                    <button id='cambiarClave'>Cambiar Contrasena</button>";
+                if ($repositorio == "") {
+                    echo "<button id='cambiarRepo'>Agregar Repositorio</button>";
+                }
+                echo "
+                    <button id='eliminarCuenta' class='red'>ELIMINAR CUENTA</button>
+                </div>
                 ";
-            if ($activo) {}
             }
             ?>
         </div>
-        <h1 class="titulo">PUBLICACIONES</h1>
+        <h1 class="titulo">MIS PUBLICACIONES</h1>
         <?php
-        $sql = "SELECT p.id_publicacion, u.correo, u.nombre AS nombre,u.apellido AS apellido,p.fecha,p.descripcion,p.imagen AS pimagen,u.imagen AS uimagen,p.likes FROM publicacion p JOIN usuario u ON u.correo = correo_usuario WHERE correo = '$correo' ORDER BY fecha DESC";
+        $sql = "SELECT p.id_publicacion, u.correo, u.nombre AS nombre,u.apellido AS apellido,p.fecha,p.descripcion,p.imagen AS pimagen,u.imagen AS uimagen,p.likes FROM publicacion p JOIN usuario u ON u.correo = correo_usuario WHERE correo_usuario = '$activo' ORDER BY fecha DESC";
         $consulta = $conexion->query($sql);
         if ($consulta) {
             while ($fila = $consulta->fetch_assoc()) {
@@ -168,7 +179,11 @@ if ($consulta) {
                                 </div>
                             </div>
                         </a>
-                        <h4>$fecha</h4>
+                        <div>
+                            <h4>$fecha</h4>
+                            <i class='fa-solid fa-x fa-xl' style='color: #ff0000;' title='$id_publicacion' id='botonEliminarPublicacion'></i>
+                        </div>
+                        
                     </div>
                     <p>$descripcion</p>
                     <img src='$imagenPublicacion'>
@@ -179,7 +194,6 @@ if ($consulta) {
                     echo "<i id='botonLike' class='fa-regular fa-heart fa-2xl' title='$id_publicacion'> $likes</i>";
                 }
                 echo "
-                        
                         <a href='detallesPublicacion.php?id=" . $id_publicacion . "'><h3><i class='fa-solid fa-comments fa-2xl'> $comentarios</i></h3></a>
                     </div>
                 </div>  
@@ -193,9 +207,13 @@ if ($consulta) {
             <h4>Developed by: Alejandro Amador Ruiz & Juan José Jaramillo</h4>
         </div>
     </footer>
-    <script src="./static/js/Likes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./static/js/CargarBandera.js"></script>
-    <script src="./static/js/Seguir.js"></script>
+    <script src="./static/js/Api.js"></script>
+    <script src="./static/js/Validaciones.js"></script>
+    <script src="./static/js/Modificaciones.js"></script>
+    <script src="./static/js/Likes.js"></script>
+    <script src="./static/js/Eliminar.js"></script>
 </body>
 
 </html>

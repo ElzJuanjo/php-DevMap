@@ -10,13 +10,12 @@
 </head>
 <?php
 session_start();
-ini_set('display_errors', 0);
-error_reporting(0);
 include_once("db.php");
 $conexion = conn();
 $activo = $_SESSION['correo'];
+$correo = $_GET['following'];
 if ($activo == "") {
-    echo "<script>window.location.href = 'index.php';</script>";
+    echo "<script>window.location.href = '../index.php';</script>";
 }
 $consulta = $conexion->query("SELECT nombre, apellido, imagen FROM usuario WHERE correo = '$activo'");
 if ($consulta) {
@@ -42,35 +41,22 @@ if ($consulta) {
             <a href="myAccount.php"><button>
                     <h3>MI CUENTA</h3>
                 </button></a>
-            <a href="index.php"><button>
+            <a href="../index.php"><button>
                     <h3>CERRAR SESIÓN</h3>
                 </button></a>
         </div>
     </header>
     <main>
         <div class="formulario">
-            <form action="searchUsers.php" method="POST">
-                <div class="campo">
-                    <h3>Buscar Usuario:</h3>
-                    <input type="text" placeholder="Correo o nombre del usuario" name="correo">
-                </div>
-                <button type="submit">
-                    <h3>Buscar</h3>
-                </button>
-            </form>
             <?php
-            $correo = $_POST["correo"];
-            $sql = "SELECT nombre, apellido, imagen, correo FROM usuario WHERE correo = '0'"; 
-            if (strstr($correo, "@") != false) {
-                $sql = "SELECT nombre, apellido, imagen, correo FROM usuario WHERE correo = '$correo'";
-            } else if ($correo != "") {
-                $sql = "SELECT nombre, apellido, imagen, correo FROM usuario WHERE nombre LIKE '%$correo%' OR apellido LIKE '%$correo%' ORDER BY nombre";
-            }
-              
+            echo "<h1 class='titulo'>Usuarios seguidos por $correo</h1>";
+            $sql = "SELECT seguido FROM seguidor WHERE seguidor = '$correo'";
             $consulta = $conexion->query($sql);
             $resultado = $consulta->num_rows;
-            if ($resultado >= 1) {
-                while ($fila = $consulta->fetch_assoc()) {
+            if ($resultado > 0) {
+                while ($usuario = $consulta->fetch_assoc()) {
+                    $user = $usuario['seguido'];
+                    $fila = $conexion->query("SELECT nombre, apellido, imagen, correo FROM usuario WHERE correo = '$user'")->fetch_assoc();
                     $nombre = $fila['nombre'];
                     $apellido = $fila['apellido'];
                     $imagen = $fila['imagen'];
@@ -83,11 +69,10 @@ if ($consulta) {
                         <br>
                         <a href='account.php?correo=" . $correo . "'><button>VER MÁS</button></a>
                     </div>
-
                     ";
                 }
             } else {
-                echo "<br>No se ha encontrado ningún usuario.";
+                echo "<br>Este usuario no sigue a nadie.";
             }
             ?>
         </div>

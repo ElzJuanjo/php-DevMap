@@ -15,7 +15,7 @@ $conexion = conn();
 $activo = $_SESSION['correo'];
 $correo = $_GET['followed'];
 if ($activo == "") {
-    echo "<script>window.location.href = 'index.php';</script>";
+    echo "<script>window.location.href = '../index.php';</script>";
 }
 $consulta = $conexion->query("SELECT nombre, apellido, imagen FROM usuario WHERE correo = '$activo'");
 if ($consulta) {
@@ -41,7 +41,7 @@ if ($consulta) {
             <a href="myAccount.php"><button>
                     <h3>MI CUENTA</h3>
                 </button></a>
-            <a href="index.php"><button>
+            <a href="../index.php"><button>
                     <h3>CERRAR SESIÓN</h3>
                 </button></a>
         </div>
